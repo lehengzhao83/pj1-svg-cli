@@ -13,6 +13,9 @@ export class SvgCodec {
   decode(source: string): { document: SvgDocument; warnings: readonly string[] } {
     XmlValue.assert(source);
     if (/<!DOCTYPE|<!ENTITY/i.test(source)) throw new Error('invalid SVG: DTD and entities are unsupported');
+    // xmldom 0.8 can silently discard text preceding the root; reject it explicitly.
+    const leading = source.replace(/^\uFEFF/u, '').replace(/^(?:[\t\r\n ]|<\?[\s\S]*?\?>|<!--[\s\S]*?-->)+/u, '');
+    if (!leading.startsWith('<')) throw new Error('invalid SVG: malformed XML');
     const errors: string[] = [];
     const xml = new DOMParser({
       errorHandler: {
@@ -22,6 +25,9 @@ export class SvgCodec {
       },
     }).parseFromString(source, 'image/svg+xml');
     if (errors.length || !xml.documentElement) throw new Error('invalid SVG: malformed XML');
+    if (Array.from(xml.childNodes).some(node => (node.nodeType === 3 || node.nodeType === 4) && /[^\t\r\n ]/u.test(node.nodeValue ?? ''))) {
+      throw new Error('invalid SVG: text outside root');
+    }
     const root = xml.documentElement;
     if (root.tagName !== 'svg' || (root.namespaceURI && root.namespaceURI !== this.namespace)) {
       throw new Error('invalid SVG: expected <svg> root');

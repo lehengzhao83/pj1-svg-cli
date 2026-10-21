@@ -52,6 +52,7 @@ test('SVG comments, CDATA, default dimensions and root paint survive supported r
 
 for (const xml of [
   '', '<g/>', '<svg><g></svg>', '<svg><rect width="oops"/></svg>',
+  '<svg/>trailing', 'trailing<svg/>', '<?xml version="1.0"?>trailing<svg/>', '<!-- comment -->trailing<svg/>',
   '<svg><g id="a"/><circle id="a"/></svg>', '<svg><path id="p"/></svg>',
   '<svg><text id="t"><tspan>no</tspan></text></svg>',
   '<svg><rect id="r" transform="rotate(1)"/></svg>',
