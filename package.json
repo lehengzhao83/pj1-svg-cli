@@ -1,0 +1,17 @@
+{
+  "name": "pj1-svg-cli",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PJ1 Phase 1 object-oriented CLI SVG editor",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "cli": "tsx src/main.ts",
+    "test": "tsx --test test/*.test.ts",
+    "check": "npm run build && npm test && npm run check:architecture",
+    "check:architecture": "tsx scripts/check-architecture.ts"
+  },
+  "dependencies": { "@xmldom/xmldom": "^0.8.11" },
+  "devDependencies": { "@types/node": "^22.0.0", "tsx": "^4.20.0", "typescript": "^5.9.0" }
+}
