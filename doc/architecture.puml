@@ -1,0 +1,37 @@
+@startuml
+!pragma layout smetana
+skinparam componentStyle rectangle
+title PJ1 Phase 1 — dependency direction
+component "main.ts\nComposition root" as Main
+package "cli" {
+  component "Repl / CommandRouter\nTokenizer / TreeRenderer" as Cli
+}
+package "application" {
+  component Editor
+}
+package "commands" {
+  component "EditCommand / CommandHistory\nConcrete edit commands" as Commands
+}
+package "ports" {
+  interface DocumentStore
+}
+package "infrastructure" {
+  component "NodeDocumentStore / SvgCodec" as Infra
+}
+package "domain" {
+  component "SvgDocument / Shape / Group\nGeometricShape / concrete shapes\nShapeFactory / ShapeDefinition" as Domain
+}
+Main --> Cli
+Main --> Editor
+Main --> Infra
+Cli --> Editor
+Cli --> Commands
+Cli --> Domain
+Editor --> Commands
+Editor --> DocumentStore
+Editor --> Domain
+Commands --> Domain
+DocumentStore --> Domain
+Infra ..|> DocumentStore
+Infra --> Domain
+@enduml
