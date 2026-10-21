@@ -1,13 +1,15 @@
 import { GeometricShape } from './GeometricShape.js';
+import { XmlValue } from './XmlValue.js';
 
 export class Text extends GeometricShape {
   override readonly tag = 'text';
   constructor(id: string, x: number, y: number, private content: string) {
     super(id, { x, y }, ['x'], ['y'], []);
+    XmlValue.assert(content);
   }
   override get text(): string { return this.content; }
   override set(attribute: string, value: string): void {
-    if (attribute === 'text') { this.content = value; return; }
+    if (attribute === 'text') { XmlValue.assert(value); this.content = value; return; }
     super.set(attribute, value);
   }
   override clone(): Text {

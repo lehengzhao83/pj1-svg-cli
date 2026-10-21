@@ -1,11 +1,13 @@
 import type { Group } from './Group.js';
 import { Numbers } from './Numbers.js';
+import { XmlValue } from './XmlValue.js';
 
 export abstract class Shape {
   private owner: Group | undefined;
   private readonly styles = new Map<string, string>();
 
   protected constructor(private readonly identifier: string) {
+    XmlValue.assert(identifier);
     if (!identifier || /[\s<>"'=&]/u.test(identifier)) throw new Error(`invalid id: ${identifier}`);
   }
 
@@ -27,6 +29,7 @@ export abstract class Shape {
   attach(parent: Group | undefined): void { this.owner = parent; }
 
   set(attribute: string, value: string): void {
+    XmlValue.assert(value);
     if (!['fill', 'stroke', 'stroke-width'].includes(attribute)) {
       throw new Error(`unknown attribute: ${attribute}`);
     }

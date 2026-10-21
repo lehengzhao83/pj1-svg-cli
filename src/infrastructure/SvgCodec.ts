@@ -4,12 +4,14 @@ import { Numbers } from '../domain/Numbers.js';
 import { Shape } from '../domain/Shape.js';
 import { ShapeFactory } from '../domain/ShapeFactory.js';
 import { SvgDocument } from '../domain/SvgDocument.js';
+import { XmlValue } from '../domain/XmlValue.js';
 
 export class SvgCodec {
   private readonly namespace = 'http://www.w3.org/2000/svg';
   constructor(private readonly factory = new ShapeFactory()) {}
 
   decode(source: string): { document: SvgDocument; warnings: readonly string[] } {
+    XmlValue.assert(source);
     if (/<!DOCTYPE|<!ENTITY/i.test(source)) throw new Error('invalid SVG: DTD and entities are unsupported');
     const errors: string[] = [];
     const xml = new DOMParser({
@@ -89,9 +91,9 @@ export class SvgCodec {
       for (const [key, value] of Object.entries(shape.attributes())) element.setAttribute(key, value);
       if (shape.text !== undefined) element.appendChild(xml.createTextNode(shape.text));
       parent.appendChild(element);
-      for (const child of shape.children) append(child, element as unknown as Element);
+      for (const child of shape.children) append(child, element);
     };
-    for (const shape of document.root.children) append(shape, root as unknown as Element);
+    for (const shape of document.root.children) append(shape, root);
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(xml) + '\n';
   }
 
